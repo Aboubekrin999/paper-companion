@@ -1,5 +1,7 @@
 # Paper Companion
 
+[![CI](https://github.com/Aboubekrin999/paper-companion/actions/workflows/ci.yml/badge.svg)](https://github.com/Aboubekrin999/paper-companion/actions/workflows/ci.yml)
+
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
 **Status:** In development — v1 target end of May 2026
