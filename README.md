@@ -45,7 +45,7 @@ Built first for the author's own use as an AI master's student, working in Engli
 | Database | Supabase (Postgres + pgvector + Auth) | One service for relational data, vector search, and auth |
 | LLM | Anthropic Claude (Sonnet for chat, Haiku for pre-processing) | Long-context reading and honest citation behavior |
 | Embeddings | `intfloat/multilingual-e5-large` | Open, strong on FR + EN, no per-call cost |
-| Hosting | Vercel · Railway · Supabase | Best-in-class per layer; generous free tiers |
+| Hosting | Vercel (web + Python Functions) · Supabase (data) | One platform for both layers (see [ADR-006](docs/DECISIONS.md#adr-006)); generous free tiers |
 
 Full reasoning in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
@@ -53,7 +53,7 @@ Full reasoning in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 ```mermaid
 graph LR
-  Web[Next.js 16<br/>Vercel] -->|HTTPS / SSE| Api[FastAPI<br/>Railway]
+  Web[Next.js 16<br/>Vercel] -->|HTTPS / SSE| Api[FastAPI<br/>Vercel Python]
   Api -->|SQL + pgvector| DB[(Supabase<br/>Postgres)]
   Api -->|chat / embeddings| LLM[Claude API]
   Api -->|self-hosted| Emb[multilingual-e5]

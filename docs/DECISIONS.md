@@ -88,3 +88,26 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 **Why.** Auto-summarization burns tokens on papers the user never reads, and a one-shot summary often misses what the user actually cares about. On-demand retrieval surfaces the user's *specific* question and grounds the answer in the relevant chunks.
 
 **Consequences.** First chat per paper has slightly higher latency (no pre-baked summary). Acceptable.
+
+---
+
+## ADR-006 — Vercel Python Functions instead of Railway for the FastAPI backend
+
+**Date:** 2026-04-27
+**Status:** Accepted (supersedes the Railway choice in [ADR-001](#adr-001))
+
+**Context.** ADR-001 chose to split `web/` and `api/` into separate deploy targets — Vercel for Next.js, Railway for FastAPI. Vercel has since matured Python Functions (managed serverless Python runtime) into a real option for Python web frameworks.
+
+**Decision.** Deploy the FastAPI backend as Vercel Python Functions, in a separate Vercel project that builds from `api/`. Keep the architectural split (two Vercel projects), drop Railway from the stack.
+
+**Why.**
+- One platform for both `web/` and `api/` — single dashboard, single billing, single environment-variable surface.
+- Vercel Python Functions support FastAPI directly; the entry point is `api/index.py`, which the runtime detects automatically.
+- Vercel's free tier covers v1's expected traffic.
+- Cold-start latency is acceptable for an interactive research tool (single-digit seconds at worst, <500ms warm).
+- Reduces failure surface: one auth flow to manage with the platform, one CLI, one set of environment variables.
+
+**Consequences.**
+- Long-running tasks (e.g., heavy embedding jobs) hit Vercel's max function duration. Mitigation: defer batch work to a separate worker if/when needed (probably not in v1; we embed at ingest time per chunk, which is fast).
+- Inner directory layout becomes `api/api/index.py` (the outer `api/` is the project folder, the inner `api/` is Vercel's required functions directory). Ugly but documented.
+
