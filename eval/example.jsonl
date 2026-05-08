@@ -1,0 +1,3 @@
+{"id":"ex-1","question":"What dataset was used to fine-tune the model?","paper_id":"2401.12345","relevant_chunk_ids":["c-2401.12345-12","c-2401.12345-13"]}
+{"id":"ex-2","question":"What macro-F1 was reported on the test set?","paper_id":"2401.12345","relevant_chunk_ids":["c-2401.12345-32"],"expected_answer":"0.81 macro-F1 on the held-out test set."}
+{"id":"ex-3","question":"Quelle méthodologie de pré-entraînement est utilisée ?","paper_id":"hal-2024-001","relevant_chunk_ids":["c-hal-2024-001-7"]}
