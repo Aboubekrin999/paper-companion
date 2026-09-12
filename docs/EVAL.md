@@ -28,7 +28,7 @@ Hand-authored items, one JSON object per line, in `eval/<set>.jsonl`. Schema:
 }
 ```
 
-Target for v1: **30 items across 5 papers**, balanced EN/FR. Each item is reviewed by the author before commit. `relevant_chunk_ids` are derived from the chunker's deterministic IDs, so the eval set is reproducible from the source PDF + chunker config — no hidden state.
+Target for v1: **30 items across 5 papers**, balanced EN/FR. Each item is reviewed by hand before commit. `relevant_chunk_ids` are derived from the chunker's deterministic IDs, so the eval set is reproducible from the source PDF + chunker config — no hidden state.
 
 ## Faithfulness rubric
 

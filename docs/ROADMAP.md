@@ -1,6 +1,10 @@
 # 4-Week Roadmap to v1
 
-Target: live demo URL by end of May 2026. Budget: ~10 hours per week.
+> **This is the original plan, written in April 2026.** Work paused in May.
+> For what is actually built today, see the
+> [project README](../README.md#whats-built-today).
+
+Planned around roughly 10 hours a week, which is why the scope is deliberately tight.
 
 Each week ends in a demo-able milestone. If a week slips, the milestone shrinks before the timeline does.
 

@@ -22,7 +22,7 @@ Steps 2–3 waste hours per week. Steps 5–6 mean prior reading rarely compound
 - Researchers maintaining a personal library of relevant work
 - Self-studiers working through a syllabus or textbook
 
-Built first for the author's own use as an AI master's student, working in English and French.
+Built first as a tool for my own reading, in English and French.
 
 ## What v1 does
 
@@ -113,6 +113,8 @@ App at <http://localhost:3000>. A Supabase URL and anon key are required for any
 
 ## Author
 
-**Aboubekrin Mohamed Salem** — software engineer and MSc AI candidate, Paris. Built as a daily-use tool for my own coursework, in English and French.
+**Aboubekrin Mohamed Salem** — software engineer, Paris.
+
+I built this to work through retrieval-augmented generation end to end rather than from a tutorial: chunking strategy, embedding choice, how to evaluate retrieval honestly, and streaming a grounded answer back to a reader. The reasoning behind each choice — including the ones I would revisit — is in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 GitHub: [@Aboubekrin999](https://github.com/Aboubekrin999)
