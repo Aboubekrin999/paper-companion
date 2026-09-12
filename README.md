@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** Backend complete through retrieval and chat · 190 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
+**Status:** Backend built through retrieval and chat, against an in-memory index · 190 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
 
 ---
 
@@ -109,7 +109,7 @@ cp .env.example .env.local    # NEXT_PUBLIC_SUPABASE_URL + anon key
 npm run dev
 ```
 
-App at <http://localhost:3000>. Sign-in needs a Supabase project; the library shell renders without one.
+App at <http://localhost:3000>. A Supabase URL and anon key are required for any route — the auth middleware runs on every request, so without them the server returns 500 rather than rendering a signed-out shell. Creating a free Supabase project and pasting the two values is enough; no schema setup is needed to see the library view.
 
 ## Author
 
