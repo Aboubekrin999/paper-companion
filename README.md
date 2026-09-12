@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** Backend built through retrieval and chat, against an in-memory index · 255 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
+**Status:** End-to-end — ingest an arXiv link, ask a question, get a streamed answer with citations. Runs against an in-memory index; not yet deployed. 255 tests green.
 
 ---
 
@@ -52,7 +52,8 @@ Honest state of the repo, so you can tell the code from the plan.
 | **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
 | **API auth** — Supabase JWT verification, every data route scoped to its caller | Built, tested |
 | **Web auth** — Supabase magic link, protected routes, library shell | Built |
-| **Web chat UI** — the surface that consumes the streaming endpoint | Not built |
+| **Web chat UI** — streams the answer, paints citation chips before the first token | Built |
+| **Web library** — list papers, ingest an arXiv link, open a paper | Built |
 | **pgvector persistence** — currently in-memory; Supabase-backed index | Not built |
 
 255 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
