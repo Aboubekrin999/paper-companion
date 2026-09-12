@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from api.auth import CurrentUser, current_user
 from api.chat.llm import LLM, ClaudeLLM, FakeLLM
 from api.chat.orchestrator import Citation
 from api.embeddings import build_encoder
@@ -41,7 +42,7 @@ app.add_middleware(
     allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "DELETE"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 
@@ -152,10 +153,11 @@ async def health() -> HealthResponse:
 async def create_paper(
     body: CreatePaperRequest,
     store: Annotated[PaperStore, Depends(get_store)],
+    user: Annotated[CurrentUser, Depends(current_user)],
 ) -> PaperResponse:
     """Ingest an arXiv paper: fetch, parse, chunk, embed, index. Idempotent."""
     try:
-        record = store.ingest_arxiv(body.reference)
+        record = store.ingest_arxiv(body.reference, user_id=user.id)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except FetchError as exc:
@@ -166,17 +168,21 @@ async def create_paper(
 @app.get("/papers", response_model=list[PaperResponse], tags=["papers"])
 async def list_papers(
     store: Annotated[PaperStore, Depends(get_store)],
+    user: Annotated[CurrentUser, Depends(current_user)],
 ) -> list[PaperResponse]:
-    return [PaperResponse.from_record(r) for r in store.list_papers()]
+    return [
+        PaperResponse.from_record(r) for r in store.list_papers(user_id=user.id)
+    ]
 
 
 @app.get("/papers/{paper_id}", response_model=PaperResponse, tags=["papers"])
 async def get_paper(
     paper_id: str,
     store: Annotated[PaperStore, Depends(get_store)],
+    user: Annotated[CurrentUser, Depends(current_user)],
 ) -> PaperResponse:
     try:
-        record = store.get(paper_id)
+        record = store.get(paper_id, user_id=user.id)
     except PaperNotFound as exc:
         raise HTTPException(status_code=404, detail=f"paper {paper_id!r} not found") from exc
     return PaperResponse.from_record(record)
@@ -188,6 +194,7 @@ async def chat(
     body: ChatRequest,
     store: Annotated[PaperStore, Depends(get_store)],
     llm: Annotated[LLM, Depends(get_llm)],
+    user: Annotated[CurrentUser, Depends(current_user)],
 ) -> StreamingResponse:
     """Stream a grounded chat answer as JSONL events.
 
@@ -198,7 +205,9 @@ async def chat(
     - ``{"type":"done"}`` — emitted last
     """
     try:
-        result = store.chat(paper_id, body.question, k=body.k, llm=llm)
+        result = store.chat(
+            paper_id, body.question, user_id=user.id, k=body.k, llm=llm
+        )
     except PaperNotFound as exc:
         raise HTTPException(status_code=404, detail=f"paper {paper_id!r} not found") from exc
     except ValueError as exc:

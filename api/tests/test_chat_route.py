@@ -15,7 +15,9 @@ from reportlab.pdfgen import canvas
 
 from api.chat.llm import FakeLLM
 from api.embeddings import HashEncoder
+from api.auth import current_user
 from api.index import app, get_llm, get_store
+from tests.conftest import ALICE
 from api.store import PaperStore
 
 
@@ -44,7 +46,7 @@ def _store_with_paper(reference: str = "2401.12345") -> PaperStore:
         follow_redirects=True,
     )
     store = PaperStore(encoder=HashEncoder(dimensions=64), http_client=client)
-    store.ingest_arxiv(reference)
+    store.ingest_arxiv(reference, user_id=ALICE.id)
     return store
 
 
@@ -54,6 +56,7 @@ def client_with_paper():
     fake_llm = FakeLLM("Cats are mammals based on the context.", chunks=3)
     app.dependency_overrides[get_store] = lambda: store
     app.dependency_overrides[get_llm] = lambda: fake_llm
+    app.dependency_overrides[current_user] = lambda: ALICE
     try:
         yield TestClient(app), store, fake_llm
     finally:

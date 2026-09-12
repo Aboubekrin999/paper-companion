@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** Backend built through retrieval and chat, against an in-memory index · 219 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
+**Status:** Backend built through retrieval and chat, against an in-memory index · 255 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
 
 ---
 
@@ -50,11 +50,12 @@ Honest state of the repo, so you can tell the code from the plan.
 | **Chat** — orchestrator, Claude streaming wrapper with prompt caching | Built, tested |
 | **Eval harness** — items, metrics, runner for retrieval quality | Built, tested |
 | **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
+| **API auth** — Supabase JWT verification, every data route scoped to its caller | Built, tested |
 | **Web auth** — Supabase magic link, protected routes, library shell | Built |
 | **Web chat UI** — the surface that consumes the streaming endpoint | Not built |
 | **pgvector persistence** — currently in-memory; Supabase-backed index | Not built |
 
-219 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
+255 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
 
 Work paused in May 2026 while client delivery took priority. Nothing above is aspirational — the roadmap in [`docs/ROADMAP.md`](docs/ROADMAP.md) covers what comes next.
 
@@ -95,7 +96,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env          # fill in Supabase + Anthropic keys
 
-pytest                        # 219 passed, 1 skipped
+pytest                        # 255 passed, 1 skipped
 uvicorn api.index:app --reload --port 8000
 ```
 

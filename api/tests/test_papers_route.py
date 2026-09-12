@@ -13,7 +13,9 @@ from reportlab.pdfgen import canvas
 from io import BytesIO
 
 from api.embeddings import HashEncoder
+from api.auth import current_user
 from api.index import app, get_store
+from tests.conftest import ALICE, BOB
 from api.store import PaperStore
 
 
@@ -46,6 +48,7 @@ def _store_serving(pdf_bytes: bytes) -> PaperStore:
 def client_with_store():
     store = _store_serving(_make_pdf(["First page.", "Second page."]))
     app.dependency_overrides[get_store] = lambda: store
+    app.dependency_overrides[current_user] = lambda: ALICE
     try:
         yield TestClient(app), store
     finally:
@@ -78,7 +81,7 @@ class TestCreatePaper:
         client.post("/papers", json={"reference": "2401.12345"})
         response = client.post("/papers", json={"reference": "2401.12345"})
         assert response.status_code == 201
-        assert len(store.list_papers()) == 1
+        assert len(store.list_papers(user_id=ALICE.id)) == 1
 
     def test_fetch_failure_returns_502(self):
         def handler(request):
@@ -91,6 +94,7 @@ class TestCreatePaper:
         )
         store = PaperStore(encoder=HashEncoder(dimensions=64), http_client=client)
         app.dependency_overrides[get_store] = lambda: store
+        app.dependency_overrides[current_user] = lambda: ALICE
         try:
             response = TestClient(app).post("/papers", json={"reference": "2401.12345"})
             assert response.status_code == 502
@@ -102,6 +106,7 @@ class TestListAndGet:
     def test_list_returns_empty_when_no_papers(self):
         store = PaperStore(encoder=HashEncoder(dimensions=64))
         app.dependency_overrides[get_store] = lambda: store
+        app.dependency_overrides[current_user] = lambda: ALICE
         try:
             response = TestClient(app).get("/papers")
             assert response.status_code == 200

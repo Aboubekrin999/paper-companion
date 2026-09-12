@@ -155,7 +155,7 @@ Three ways out:
 
 `EMBEDDING_BACKEND` selects between them at startup.
 
-**Why this works.** All three produce vectors for the same protocol, and A and C produce the *same 1024-dimension vectors from the same weights* — so `vector(1024)` in [`0001_init.sql`](../infra/supabase/migrations/0001_init.sql) is correct for both, and an index built locally is valid in production. No caller — store, orchestrator, eval harness, routes — learns which backend is in use.
+**Why this works.** All three produce vectors for the same protocol, and A and C produce the *same 1024-dimension vectors from the same weights* — so `vector(1024)` in [the initial migration](../supabase/migrations/20260427000000_init.sql) is correct for both, and an index built locally is valid in production. No caller — store, orchestrator, eval harness, routes — learns which backend is in use.
 
 **Consequences.**
 
