@@ -31,7 +31,7 @@ Each week ends in a demo-able milestone. If a week slips, the milestone shrinks 
 - [x] arXiv link → PDF fetcher in `api/`
 - [x] PDF parser (pypdf, fall back to unstructured for scanned PDFs)
 - [x] Recursive chunker with overlap, preserves metadata (page numbers, section headers)
-- [ ] multilingual-e5-large embedding pipeline — the encoder protocol is defined, but no embedding model is wired in yet
+- [ ] multilingual-e5-large embedding pipeline — the encoder is implemented (`api/embeddings/e5.py`) and tested, but `get_encoder()` still returns the hash encoder and nothing is deployed
 - [ ] Persist `papers` and `chunks` to Supabase
 - [ ] Library view: list papers, click into chunk inspector
 
