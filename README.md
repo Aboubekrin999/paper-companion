@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** End-to-end — ingest an arXiv link, ask a question, get a streamed answer with citations. Runs against an in-memory index; not yet deployed. 255 tests green.
+**Status:** The full path is wired, browser to streamed answer, but it runs in stub mode — no LLM key is configured, so answers come from a stub, and the default encoder is a 64-dim hash rather than multilingual-e5. In-memory index, not deployed. 255 tests green.
 
 ---
 
@@ -52,8 +52,9 @@ Honest state of the repo, so you can tell the code from the plan.
 | **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
 | **API auth** — Supabase JWT verification, every data route scoped to its caller | Built, tested |
 | **Web auth** — Supabase magic link, protected routes, library shell | Built |
-| **Web chat UI** — streams the answer, paints citation chips before the first token | Built |
-| **Web library** — list papers, ingest an arXiv link, open a paper | Built |
+| **Web chat UI** — streams the answer, paints citation chips before the first token | Built — typechecks and builds; not yet exercised against a running API |
+| **Web library** — list papers, ingest an arXiv link, open a paper | Built — same caveat |
+| **A real grounded answer** — needs `ANTHROPIC_API_KEY` and `EMBEDDING_BACKEND=e5` | Not yet run |
 | **pgvector persistence** — currently in-memory; Supabase-backed index | Not built |
 
 255 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
