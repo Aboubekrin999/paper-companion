@@ -20,7 +20,15 @@ def _sentence_transformers_available() -> bool:
 
 
 class TestLazyImport:
-    def test_package_imports_without_sentence_transformers(self, monkeypatch):
+    def test_package_imports_without_sentence_transformers(self, monkeypatch, request):
+        # Reloading rebinds every class the package defines, so anything
+        # holding an import-time reference (another test module, the route
+        # layer) would be left comparing against a stale object. Reload once
+        # more at teardown, with the real sys.modules back, to land on a
+        # consistent final state.
+        request.addfinalizer(
+            lambda: importlib.reload(importlib.import_module("api.embeddings"))
+        )
         # Scrub the dep from the import system to simulate a CI environment.
         monkeypatch.setitem(sys.modules, "sentence_transformers", None)
         # Re-importing the package must succeed even with the dep gone.

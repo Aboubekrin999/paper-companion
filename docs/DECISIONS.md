@@ -125,3 +125,41 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 - Long-running tasks (e.g., heavy embedding jobs) hit Vercel's max function duration. Mitigation: defer batch work to a separate worker if/when needed (probably not in v1; we embed at ingest time per chunk, which is fast).
 - Inner directory layout becomes `api/api/index.py` (the outer `api/` is the project folder, the inner `api/` is Vercel's required functions directory). Ugly but documented.
 
+
+---
+
+<a id="adr-007"></a>
+
+## ADR-007 — Same encoder protocol, different backends per environment
+
+**Date:** 2026-09-12
+**Status:** Accepted
+
+**Context.** [ADR-003](#adr-003) chose `intfloat/multilingual-e5-large`, "self-hosted in the FastAPI service." [ADR-006](#adr-006) then moved that service to Vercel Python Functions. Those two decisions are not compatible, and nothing in the repo acknowledged it.
+
+The model is ~2.2 GB of weights; `torch` alone is several hundred MB more. A Vercel Serverless Function has a 250 MB unzipped bundle limit. `multilingual-e5-small` is smaller but still clears that limit once torch is counted. No variant of "ship the weights inside the function" works.
+
+Three ways out:
+
+| Option | Cost | Retrieval quality | Fits ADR-006 |
+|---|---|---|---|
+| **A.** Separate always-on service (Fly / Railway) holding the model | A second platform, a paid instance to stay warm | Full | No — reintroduces the platform split ADR-006 removed |
+| **B.** Smaller model inside the function | Free | Lower, and still over the size limit in practice | No |
+| **C.** Hosted inference for the same model, called over HTTP | Free tier, then per-call | Full — identical weights | Yes |
+
+**Decision.** Option C, expressed as a third implementation of the existing `Encoder` protocol rather than a change to any caller.
+
+- **Local development and tests** use `E5Encoder` — the real model, running on the developer's machine, no network, no cost.
+- **Deployed environments** use `HFInferenceEncoder`, which calls the Hugging Face Inference API for the same `multilingual-e5-large` weights.
+- **CI** uses `HashEncoder`, as it already does.
+
+`EMBEDDING_BACKEND` selects between them at startup.
+
+**Why this works.** All three produce vectors for the same protocol, and A and C produce the *same 1024-dimension vectors from the same weights* — so `vector(1024)` in [`0001_init.sql`](../infra/supabase/migrations/0001_init.sql) is correct for both, and an index built locally is valid in production. No caller — store, orchestrator, eval harness, routes — learns which backend is in use.
+
+**Consequences.**
+
+- A network round-trip per ingest batch and per query in deployed environments. Ingest is already network-bound (fetching the PDF), so the marginal cost lands mostly on query latency.
+- A hosted-inference outage degrades retrieval to an error rather than a slow path. Acceptable for v1; a local fallback is possible later because the protocol allows it.
+- Vector dimensions are now a property of the *model*, not the backend. Any future switch to a different model is a migration of the `vector(N)` column, and the encoder's `dimensions` must be checked against the schema at startup rather than assumed.
+- `HashEncoder`'s 64 dimensions never match the schema. It is a test double only, and the store must refuse to persist vectors whose width disagrees with the column.

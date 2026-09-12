@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 
 from api.chat.llm import LLM, ClaudeLLM, FakeLLM
 from api.chat.orchestrator import Citation
-from api.embeddings import HashEncoder
+from api.embeddings import build_encoder
 from api.embeddings.encoder import Encoder
 from api.ingest.fetcher import FetchError
 from api.store import PaperNotFound, PaperRecord, PaperStore
@@ -54,9 +54,20 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 
 
+_ENCODER: Encoder | None = None
+
+
 def get_encoder() -> Encoder:
-    """Default to ``HashEncoder`` until the ML stack is on the deploy box."""
-    return HashEncoder(dimensions=64)
+    """Build the encoder named by ``EMBEDDING_BACKEND`` (see ADR-007).
+
+    Cached for the process: ``E5Encoder`` loads ~2 GB of weights, so
+    building one per request is not an option. Tests override this
+    dependency rather than resetting the cache.
+    """
+    global _ENCODER
+    if _ENCODER is None:
+        _ENCODER = build_encoder()
+    return _ENCODER
 
 
 _STORE: PaperStore | None = None

@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** Backend built through retrieval and chat, against an in-memory index · 190 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
+**Status:** Backend built through retrieval and chat, against an in-memory index · 219 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
 
 ---
 
@@ -46,7 +46,7 @@ Honest state of the repo, so you can tell the code from the plan.
 |---|---|
 | **Ingest** — arXiv fetcher, PDF parser, recursive chunker, end-to-end pipeline | Built, tested |
 | **Retrieval** — encoder protocol, in-memory brute-force cosine index | Built, tested |
-| **Embedding model** — `E5Encoder`, multilingual-e5-large via sentence-transformers | Implemented and tested; the API still defaults to a 64-dim hash encoder |
+| **Embedding model** — `E5Encoder` (local), `HFInferenceEncoder` (deployed), `HashEncoder` (tests) | Built, tested — selected by `EMBEDDING_BACKEND`, see [ADR-007](docs/DECISIONS.md#adr-007) |
 | **Chat** — orchestrator, Claude streaming wrapper with prompt caching | Built, tested |
 | **Eval harness** — items, metrics, runner for retrieval quality | Built, tested |
 | **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
@@ -54,7 +54,7 @@ Honest state of the repo, so you can tell the code from the plan.
 | **Web chat UI** — the surface that consumes the streaming endpoint | Not built |
 | **pgvector persistence** — currently in-memory; Supabase-backed index | Not built |
 
-190 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
+219 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
 
 Work paused in May 2026 while client delivery took priority. Nothing above is aspirational — the roadmap in [`docs/ROADMAP.md`](docs/ROADMAP.md) covers what comes next.
 
@@ -66,7 +66,7 @@ Work paused in May 2026 while client delivery took priority. Nothing above is as
 | Backend | Python + FastAPI | RAG ecosystem is Python-first; clean OpenAPI for the future mobile client |
 | Database | Supabase (Postgres + pgvector + Auth) | One service for relational data, vector search, and auth |
 | LLM | Anthropic Claude (Sonnet for chat, Haiku for pre-processing) | Long-context reading and honest citation behavior |
-| Embeddings | `intfloat/multilingual-e5-large` *(implemented; not yet the API default)* | Open, strong on FR + EN, no per-call cost |
+| Embeddings | `intfloat/multilingual-e5-large` — local weights in dev, hosted inference when deployed | Open, strong on FR + EN; same 1024-d vectors either way ([ADR-007](docs/DECISIONS.md#adr-007)) |
 | Hosting | Vercel (web + Python Functions) · Supabase (data) | One platform for both layers (see [ADR-006](docs/DECISIONS.md#adr-006)); generous free tiers |
 
 Full reasoning in [`docs/DECISIONS.md`](docs/DECISIONS.md).
@@ -95,7 +95,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env          # fill in Supabase + Anthropic keys
 
-pytest                        # 190 passed, 1 skipped
+pytest                        # 219 passed, 1 skipped
 uvicorn api.index:app --reload --port 8000
 ```
 
