@@ -13,6 +13,9 @@ pip install -r requirements.txt
 # Copy env template and fill in values
 cp .env.example .env
 
+# Run the suite — no keys or network needed, it runs on fixtures
+pytest
+
 # Run with reload
 uvicorn api.index:app --reload --port 8000
 ```
@@ -34,9 +37,14 @@ See [`../docs/DECISIONS.md`](../docs/DECISIONS.md) (ADR-006) for the reasoning b
 
 ## Endpoints
 
-| Method | Path     | Description                |
-|--------|----------|----------------------------|
-| GET    | /health  | Liveness probe             |
-| GET    | /docs    | Swagger UI (FastAPI auto)  |
+| Method | Path                     | Description                                  |
+|--------|--------------------------|----------------------------------------------|
+| GET    | `/health`                | Liveness probe                               |
+| GET    | `/docs`                  | Swagger UI (FastAPI auto-generated)          |
+| POST   | `/papers`                | Ingest an arXiv link or uploaded PDF         |
+| GET    | `/papers`                | List the caller's papers                     |
+| GET    | `/papers/{paper_id}`     | Fetch one paper with its metadata            |
+| POST   | `/papers/{paper_id}/chat`| Ask a question — streams a cited answer (SSE)|
 
-The ingest, search, and chat endpoints land in weeks 2–3 — see [`../docs/ROADMAP.md`](../docs/ROADMAP.md).
+Retrieval currently runs against an in-memory vector index; the pgvector-backed
+index is the next milestone — see [`../docs/ROADMAP.md`](../docs/ROADMAP.md).

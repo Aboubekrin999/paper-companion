@@ -33,7 +33,7 @@ export default async function Home() {
             Empty for now. Upload a PDF or paste an arXiv link to get started.
           </p>
           <p className="mt-6 text-xs text-zinc-600">
-            The ingest pipeline ships in week 2 — see{" "}
+            Ingest runs on the API; this view is not yet wired to it — see{" "}
             <a
               href="https://github.com/Aboubekrin999/paper-companion/blob/main/docs/ROADMAP.md"
               className="underline transition hover:text-zinc-400"

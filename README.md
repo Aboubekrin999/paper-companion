@@ -4,7 +4,7 @@
 
 > RAG-powered reading companion for academic papers. Ingest PDFs and arXiv links, ask questions, get answers with citations.
 
-**Status:** In development — v1 target end of May 2026
+**Status:** Backend complete through retrieval and chat · 190 tests green · web chat UI not yet wired. Paused May 2026; see [What's built today](#whats-built-today).
 
 ---
 
@@ -38,6 +38,25 @@ Built first for the author's own use as an AI master's student, working in Engli
 - Sharing / collaboration (later)
 - Auto-summarization at ingest (see [ADR-005](docs/DECISIONS.md#adr-005))
 
+## What's built today
+
+Honest state of the repo, so you can tell the code from the plan.
+
+| Area | State |
+|---|---|
+| **Ingest** — arXiv fetcher, PDF parser, recursive chunker, end-to-end pipeline | Built, tested |
+| **Retrieval** — encoder protocol, in-memory vector index | Built, tested |
+| **Chat** — orchestrator, Claude streaming wrapper with prompt caching | Built, tested |
+| **Eval harness** — items, metrics, runner for retrieval quality | Built, tested |
+| **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
+| **Web auth** — Supabase magic link, protected routes, library shell | Built |
+| **Web chat UI** — the surface that consumes the streaming endpoint | Not built |
+| **pgvector persistence** — currently in-memory; Supabase-backed index | Not built |
+
+190 tests pass (`pytest`), 1 skipped. CI typechecks `web/` and runs the `api/` suite on every PR.
+
+Work paused in May 2026 while client delivery took priority. Nothing above is aspirational — the roadmap in [`docs/ROADMAP.md`](docs/ROADMAP.md) covers what comes next.
+
 ## Tech stack
 
 | Layer | Choice | Rationale |
@@ -67,10 +86,33 @@ Four-week shipping plan in [`docs/ROADMAP.md`](docs/ROADMAP.md). Weekly mileston
 
 ## Local development
 
-> Documented as each layer lands. `web/` quickstart after week 1, `api/` quickstart after week 2, full local-first stack after week 3.
+### API (FastAPI)
+
+```bash
+cd api
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env          # fill in Supabase + Anthropic keys
+
+pytest                        # 190 passed, 1 skipped
+uvicorn api.index:app --reload --port 8000
+```
+
+Swagger UI at <http://localhost:8000/docs>. The test suite needs no keys or network — it runs against fixtures, so `pytest` works on a fresh clone.
+
+### Web (Next.js)
+
+```bash
+cd web
+npm ci
+cp .env.example .env.local    # NEXT_PUBLIC_SUPABASE_URL + anon key
+npm run dev
+```
+
+App at <http://localhost:3000>. Sign-in needs a Supabase project; the library shell renders without one.
 
 ## Author
 
-**Aboubekrin Mohamed Salem** — AI Master's student. Building this as a portfolio piece and a daily-use tool. Open to feedback and to hiring conversations.
+**Aboubekrin Mohamed Salem** — software engineer and MSc AI candidate, Paris. Built as a daily-use tool for my own coursework, in English and French.
 
 GitHub: [@Aboubekrin999](https://github.com/Aboubekrin999)

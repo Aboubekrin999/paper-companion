@@ -48,7 +48,7 @@ Each week ends in a demo-able milestone. If a week slips, the milestone shrinks 
 
 ---
 
-## Week 4 — Eval, polish, recruiter-ready README
+## Week 4 — Eval, polish, documentation
 *May 18 – May 24*
 
 - [ ] Hand-built eval set: 30 question-answer pairs across 5 papers
@@ -58,7 +58,7 @@ Each week ends in a demo-able milestone. If a week slips, the milestone shrinks 
 - [ ] Real local-dev quickstart in the README
 - [ ] Live URL pinned at the top of the README
 
-**Milestone.** A recruiter clicks the URL, signs in, drops a PDF, asks a question, gets a cited answer. v1 done.
+**Milestone.** A first-time visitor opens the URL, signs in, drops a PDF, asks a question, and gets a cited answer. v1 done.
 
 ---
 
@@ -68,5 +68,5 @@ Not commitments — just where this is likely to grow.
 
 - Multi-paper Q&A (cross-corpus retrieval)
 - Library import from Zotero / Mendeley
-- Mobile companion (Project 3 — flashcards generated from papers)
-- Bilingual section classifier (Project 2) integrated as a smarter chunker
+- Mobile companion — [paper-flashcards](https://github.com/Aboubekrin999/paper-flashcards), cards generated from saved papers
+- [bilingual-section-classifier](https://github.com/Aboubekrin999/bilingual-section-classifier) integrated as a section-aware chunker

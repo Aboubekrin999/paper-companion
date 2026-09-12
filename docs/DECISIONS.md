@@ -14,7 +14,7 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 **Decision.** Split into `web/` (Next.js) and `api/` (Python FastAPI).
 
 **Why.**
-- The RAG ecosystem (sentence-transformers, LlamaIndex, custom eval harnesses) is Python-first. Re-implementing chunking and eval logic in Node would slow down the fine-tuning project (Project 2).
+- The RAG ecosystem (sentence-transformers, LlamaIndex, custom eval harnesses) is Python-first. Re-implementing chunking and eval logic in Node would slow down the companion fine-tuning project, [bilingual-section-classifier](https://github.com/Aboubekrin999/bilingual-section-classifier).
 - The future mobile client needs the same backend. A clean OpenAPI surface is reusable; Next.js API routes are not.
 - Keeps the door open for swapping the LLM and embedding layer without touching the UI.
 
@@ -55,7 +55,7 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 **Why.**
 - Claude's long-context reading and citation honesty fit a research tool.
 - multilingual-e5-large is open, free at inference, and competitive on MTEB for both English and French — a hard requirement for HAL papers and bilingual coursework.
-- Reserves OpenAI's `text-embedding-3` as a fallback if multilingual-e5 underperforms on real eval (Project 2 will produce that comparison).
+- Reserves OpenAI's `text-embedding-3` as a fallback if multilingual-e5 underperforms on real eval (the [classifier project](https://github.com/Aboubekrin999/bilingual-section-classifier) will produce that comparison).
 
 **Consequences.** Embedding cost moves to RAM and CPU on the API host instead of per-call billing. Acceptable for v1 traffic.
 
