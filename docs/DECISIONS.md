@@ -4,6 +4,8 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 
 ---
 
+<a id="adr-001"></a>
+
 ## ADR-001 — Split Next.js (web) and FastAPI (api) instead of Next.js-only
 
 **Date:** 2026-04-27
@@ -18,9 +20,13 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 - The future mobile client needs the same backend. A clean OpenAPI surface is reusable; Next.js API routes are not.
 - Keeps the door open for swapping the LLM and embedding layer without touching the UI.
 
-**Consequences.** Two deploy targets (Vercel + Railway). Slightly more glue code: CORS, auth token forwarding. Worth it.
+**Consequences.** Two deploy targets. Slightly more glue code: CORS, auth token forwarding. Worth it.
+
+> Superseded in part by [ADR-006](#adr-006): the split stands, but both targets are now Vercel projects and Railway is out of the stack.
 
 ---
+
+<a id="adr-002"></a>
 
 ## ADR-002 — Supabase Postgres with pgvector instead of a dedicated vector DB
 
@@ -40,6 +46,8 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 **Consequences.** Bound to Postgres scale ceilings. Acceptable trade for v1.
 
 ---
+
+<a id="adr-003"></a>
 
 ## ADR-003 — Anthropic Claude for chat, multilingual-e5 for embeddings
 
@@ -61,6 +69,8 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 
 ---
 
+<a id="adr-004"></a>
+
 ## ADR-004 — Monorepo with `web/` and `api/` siblings, no workspace tooling yet
 
 **Date:** 2026-04-27
@@ -72,9 +82,11 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 
 **Why.** One PR can land a feature that touches both layers; history is easier to read; adding Turborepo later is cheap. Adding it now is premature optimization.
 
-**Consequences.** CI will need to detect changed paths and skip unaffected pipelines. Will address when CI lands in week 1.
+**Consequences.** CI needs to detect changed paths and skip unaffected pipelines. The current workflow runs both pipelines on every PR; path filtering is a later optimisation.
 
 ---
+
+<a id="adr-005"></a>
 
 ## ADR-005 — No auto-summarization at ingest
 
@@ -90,6 +102,8 @@ Lightweight ADRs (Architecture Decision Records). Each entry: context → decisi
 **Consequences.** First chat per paper has slightly higher latency (no pre-baked summary). Acceptable.
 
 ---
+
+<a id="adr-006"></a>
 
 ## ADR-006 — Vercel Python Functions instead of Railway for the FastAPI backend
 

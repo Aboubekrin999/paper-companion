@@ -45,7 +45,8 @@ Honest state of the repo, so you can tell the code from the plan.
 | Area | State |
 |---|---|
 | **Ingest** — arXiv fetcher, PDF parser, recursive chunker, end-to-end pipeline | Built, tested |
-| **Retrieval** — encoder protocol, in-memory vector index | Built, tested |
+| **Retrieval** — encoder protocol, in-memory brute-force cosine index | Built, tested |
+| **Embedding model** — the encoder behind that protocol | Not wired — no model is loaded yet |
 | **Chat** — orchestrator, Claude streaming wrapper with prompt caching | Built, tested |
 | **Eval harness** — items, metrics, runner for retrieval quality | Built, tested |
 | **HTTP API** — `/health`, ingest, `/papers`, `/papers/{id}`, `/papers/{id}/chat` (SSE) | Built, tested |
@@ -65,7 +66,7 @@ Work paused in May 2026 while client delivery took priority. Nothing above is as
 | Backend | Python + FastAPI | RAG ecosystem is Python-first; clean OpenAPI for the future mobile client |
 | Database | Supabase (Postgres + pgvector + Auth) | One service for relational data, vector search, and auth |
 | LLM | Anthropic Claude (Sonnet for chat, Haiku for pre-processing) | Long-context reading and honest citation behavior |
-| Embeddings | `intfloat/multilingual-e5-large` | Open, strong on FR + EN, no per-call cost |
+| Embeddings | `intfloat/multilingual-e5-large` *(chosen, not yet wired)* | Open, strong on FR + EN, no per-call cost |
 | Hosting | Vercel (web + Python Functions) · Supabase (data) | One platform for both layers (see [ADR-006](docs/DECISIONS.md#adr-006)); generous free tiers |
 
 Full reasoning in [`docs/DECISIONS.md`](docs/DECISIONS.md).

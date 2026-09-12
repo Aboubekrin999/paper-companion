@@ -58,5 +58,5 @@ print(report.recall_at_k, report.mean_reciprocal_rank)
 ## What's intentionally out of scope for v1
 
 - **Automated faithfulness.** LLM-judge faithfulness has its own drift; the v1 set is small enough to grade by hand, which is more honest.
-- **Latency benchmarks.** Tracked separately when retrieval lands.
+- **Latency benchmarks.** Tracked separately once retrieval runs against real embeddings rather than the in-memory index.
 - **Cross-paper retrieval.** v1 retrieves within a single paper; multi-paper eval comes after the chunk index spans the library.

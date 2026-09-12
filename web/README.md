@@ -14,7 +14,9 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000>. The dev server expects the API at the URL configured in `.env.local` — see `.env.example` for the variables.
+Open <http://localhost:3000>.
+
+A Supabase URL and anon key are required for every route, not just sign-in: the auth middleware runs on each request, so with an empty `.env.local` the dev server returns 500 rather than rendering a signed-out page. The API base URL is configured in the same file — see `.env.example`.
 
 Other scripts:
 
